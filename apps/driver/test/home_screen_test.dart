@@ -41,37 +41,17 @@ Future<void> _pumpTransition(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('driver home shows a compact search bar and stats cards', (
+  testWidgets('driver home shows loading state and then map with bottom sheet', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(_buildTestApp());
 
-    await _pumpTransition(tester);
-
-    expect(find.text('Where are you heading?'), findsOneWidget);
-    expect(find.text('Today\'s Pay'), findsOneWidget);
-    expect(find.text('Shift Hours'), findsOneWidget);
-  });
-
-  testWidgets('driver home expands search and opens the destination picker', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(_buildTestApp());
+    expect(find.text('Fetching your location...'), findsOneWidget);
 
     await _pumpTransition(tester);
 
-    final destinationTile = find.text('Where are you heading?').first;
-    await tester.tap(destinationTile);
-    await _pumpTransition(tester);
-
-    expect(find.byType(TextField), findsOneWidget);
-    expect(find.text('Where are you going?'), findsOneWidget);
-
-    await tester.enterText(find.byType(TextField), 'Surat');
-    await tester.testTextInput.receiveAction(TextInputAction.search);
-    await _pumpTransition(tester);
-
-    expect(find.text('Search area, landmark, or city'), findsOneWidget);
-    expect(find.text('Confirm Destination'), findsOneWidget);
+    expect(find.text('Fetching your location...'), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byType(Stack), findsWidgets);
   });
 }
